@@ -6,11 +6,15 @@ declare global {
         name: string;
     }
 
+    interface GetCodeImgRes extends ApiCommonRes {
+        img: string
+        captchaEnabled: boolean
+    }
+
 }
 
 export function login(data: ApiRequestObj<LoginParams>) {
-
-    return request.bind(this)('/api/login', mergeApiRequestObj(data, {
+    return request.bind(this)<ApiCommonRes>('/api/login', mergeApiRequestObj(data, {
         method: 'POST',
         headers: {
             isToken: false
@@ -20,10 +24,10 @@ export function login(data: ApiRequestObj<LoginParams>) {
 
 // 获取验证码
 export function getCodeImg(data: ApiRequestObj<AnyObject>) {
- return request.bind(this)('/captchaImage', mergeApiRequestObj(data, {
+    return request.bind(this)<GetCodeImgRes>('/captchaImage', mergeApiRequestObj(data, {
         headers: {
             isToken: false
         },
-         timeout: 20000
+        timeout: 20000
     }));
 }

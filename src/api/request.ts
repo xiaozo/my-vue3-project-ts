@@ -26,8 +26,20 @@ declare global {
 
 	}
 
+	interface ApiCommonRes {
+		code: number;
+		msg: string;
+	}
+
+	// 请求错误类型
+	interface ApiError {
+		msg: string;
+		code: number;
+		data?: any;
+	}
+
 }
-export function request(url: string, data: ApiRequestObj) {
+export function request<T = any>(url: string, data: ApiRequestObj): Promise<T> {
 
 	const proxy = this as any
 	const { options, params } = data
@@ -54,7 +66,7 @@ export function request(url: string, data: ApiRequestObj) {
 		headers!['Authorization'] = 'Bearer ' + getToken()
 	}
 
-	return new Promise((resolve, reject) => {
+	return new Promise<T>((resolve, reject) => {
 		uni.request({
 			url: baseUrl + url,
 			data: params,
@@ -89,7 +101,7 @@ export function request(url: string, data: ApiRequestObj) {
 						page: proxy
 					})
 				}
-				resolve(res.data as any);
+				resolve(data as T);
 			}
 
 		}).catch((err: any) => {
