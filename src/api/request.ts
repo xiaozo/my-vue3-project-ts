@@ -1,5 +1,5 @@
 
-import { mergeRequestOptions,getToken } from './utils'
+import { mergeRequestOptions, getToken } from './utils'
 import { msgErrorToast } from '@/utils'
 
 
@@ -57,24 +57,27 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 	}
 
 
-
 	defaultOptions = mergeRequestOptions(defaultOptions, options);
 
 	const { headers } = defaultOptions;
-	const isToken = headers!.isToken
-	if (getToken() && !isToken) {
-		headers!['Authorization'] = 'Bearer ' + getToken()
+	
+	const token = headers!.isToken ? getToken() : null;
+	if (token) {
+		headers!['Authorization'] = `Bearer ${token}`;
 	}
+	console.log("请求参数", headers);
 
 	///移除isToken
 	delete headers!.isToken
-	
+
+	const heade11 = { ...headers }
+
 	return new Promise<T>((resolve, reject) => {
 		uni.request({
 			url: baseUrl + url,
 			data: params,
 			method: defaultOptions.method,
-			header: defaultOptions.headers,
+			header: headers,
 			timeout: defaultOptions.timeout,
 		}).then((res: any) => {
 			const data = res.data as any;
@@ -129,6 +132,7 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 			});
 
 			if (!!showPageState) {
+
 				uni.$emit('net-error', {
 					page: proxy,
 					msg: message
