@@ -1,20 +1,25 @@
 import { request } from "@/api/request"
 import { mergeApiRequestObj } from './utils'
 declare global {
+    
+    ///登录参数 类型转换
     interface LoginParams {
-        id?: string;
-        name: string;
+        username: string,
+        password: string,
+        code: string,
+        uuid: string
     }
 
     interface GetCodeImgRes extends ApiCommonRes {
         img: string
-        captchaEnabled: boolean
+        captchaEnabled: boolean,
+        uuid: string
     }
 
 }
 
 export function login(data: ApiRequestObj<LoginParams>) {
-    return request.bind(this)<ApiCommonRes>('/api/login', mergeApiRequestObj(data, {
+    return request.bind(this)<LoginParams>('/login', mergeApiRequestObj(data, {
         method: 'POST',
         headers: {
             isToken: false

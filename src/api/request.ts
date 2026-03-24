@@ -1,6 +1,5 @@
 
-import { getToken } from './auth'
-import { mergeRequestOptions } from './utils'
+import { mergeRequestOptions,getToken } from './utils'
 import { msgErrorToast } from '@/utils'
 
 
@@ -26,6 +25,7 @@ declare global {
 
 	}
 
+	///请求响应
 	interface ApiCommonRes {
 		code: number;
 		msg: string;
@@ -39,7 +39,7 @@ declare global {
 	}
 
 }
-export function request<T = any>(url: string, data: ApiRequestObj): Promise<T> {
+export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 
 	const proxy = this as any
 	const { options, params } = data
@@ -66,6 +66,9 @@ export function request<T = any>(url: string, data: ApiRequestObj): Promise<T> {
 		headers!['Authorization'] = 'Bearer ' + getToken()
 	}
 
+	///移除isToken
+	delete headers!.isToken
+	
 	return new Promise<T>((resolve, reject) => {
 		uni.request({
 			url: baseUrl + url,
