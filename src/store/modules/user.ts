@@ -2,8 +2,7 @@ import { ref, computed, type Ref } from 'vue';
 import { getToken, removeToken, setToken } from '@/api/utils'
 import { useLocalStorageRef } from '@/utils'
 import { defineStore } from 'pinia'
-import { login, getCodeImg, getInfo } from '@/api/login';
-import { isEmpty } from "@/utils"
+import { login, getCodeImg, getInfo, logout } from '@/api/login';
 
 // 使用 defineStore 包装你的逻辑
 export const useUserStore = defineStore('user', () => {
@@ -74,14 +73,31 @@ export const useUserStore = defineStore('user', () => {
     })
   }
 
-  function logoutAction() {
-    user.value = null
-    token.value = ''
-    permissions.value = []
-    removeToken()
+  function logoutAction(): Promise<any> {
+    ///请求退出接口
+    return new Promise((resolve, reject) => {
+
+      logout({
+         options: {
+          showLoading: true
+        }
+      }).then(() => {
+        user.value = null
+        token.value = ''
+        roles.value = []
+        permissions.value = []
+        removeToken()
+        resolve(true)
+
+      }).catch(error => {
+
+        reject(error)
+
+      })
+
+    })
+
   }
-
-
 
   /**
    * 校验用户是否拥有某权限

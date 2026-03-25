@@ -85,14 +85,15 @@ const loginAction = () => {
   // })
 
   if (userStore.isLoggedIn) {
-
+    console.log("hasadimin:",userStore.hasPermission(["*:*:*"]))
+    
 
   } else {
-    useUserStore().login(
+    userStore.login(
       loginForm.value
     ).then((res: LoginRes) => {
 
-      useUserStore().getInfo().then((res: GetInfoRes) => {
+      userStore.getInfo().then((res: GetInfoRes) => {
         console.log("getInfo res", res)
       })
     })

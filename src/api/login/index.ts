@@ -26,3 +26,10 @@ export function getInfo(data: ApiRequestObj<any>) {
     return request.bind(this)<GetInfoRes>('/getInfo', data);
 }    
 
+// 退出方法
+export function logout(data: ApiRequestObj<any>) {
+  return request.bind(this)<any>('/logout',  mergeApiRequestObj(data, {
+       method: 'POST'
+    }));
+}
+
