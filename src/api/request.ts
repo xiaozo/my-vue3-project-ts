@@ -67,7 +67,7 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 	if (token) {
 		headers!['Authorization'] = `Bearer ${token}`;
 	}
-	console.log("请求参数", headers);
+
 
 	///移除isToken
 	delete headers!.isToken

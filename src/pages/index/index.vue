@@ -3,6 +3,7 @@
     <!-- z-paging默认铺满全屏，此时页面所有view都应放在z-paging标签内，否则会被盖住 -->
     <!-- 需要固定在页面顶部的view请通过slot="top"插入，包括自定义的导航栏 -->
     <image :src="codeUrl" class="login-code-img" @click="loginAction"></image>
+    <text v-if="$hasPermission(['*:*:*'])">{{loginForm.username}}</text>
     <input v-model="loginForm.code" type="number" class="input" placeholder="请输入验证码" maxlength="4" />
     <view class="item" v-for="(item, index) in dataList" :key="index">
       <view class="item-title"> </view>
@@ -18,16 +19,15 @@ import {
 const { proxy } = getCurrentInstance() as AnyObject
 import { login, getCodeImg, getInfo } from '@/api/login';
 import { setToken } from '@/api/utils';
+import { pageHook } from "@/common/pageHook"
 import { useUserStore } from '@/store'
-import {
-  pageHook
-} from "@/common/pageHook"
+
+const userStore = useUserStore()
 
 const codeUrl = ref("")
 // v-model绑定的这个变量不要在分页请求结束中自己赋值，直接使用即可
 const dataList = ref([])
 
-const userStore = useUserStore()
 // 或使用简化写法
 const paging = ref<MyPagingRef>();
 

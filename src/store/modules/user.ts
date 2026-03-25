@@ -111,7 +111,7 @@ export const useUserStore = defineStore('user', () => {
       // 假设你已经定义了 store：const userStore = useUserStore()
       // 注意：不要在函数内部用 permissions = permissions.value，会报错
       const userPermissions: string[] = permissions.value;
-
+      
       const permissionDatas = value;
       const ALL_PERMISSION = "*:*:*";
 
