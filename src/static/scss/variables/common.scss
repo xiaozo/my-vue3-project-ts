@@ -1,0 +1,416 @@
+.uni-stat__select {
+  cursor: none !important;
+}
+
+.u-cell {
+  background-color: white;
+  border: none;
+}
+
+.u-border {
+  border-width: .5px !important;
+  border-color: #dadbde !important;
+  border-style: solid;
+}
+
+.u-border-bottom {
+  border-bottom-width: .5px !important;
+  border-color: #dadbde !important;
+  border-bottom-style: solid;
+}
+
+
+page {
+  background: $uni-color-page-bg;
+  height: 100%;
+
+  --ba-home-card-wapper-ma: 12rpx;
+}
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.ba-nav-bg-color {
+  background-color: $uni--color-nav-bg;
+}
+
+.ba-placeholder-color {
+  background-color: $uni-placeholder-grey;
+}
+
+
+.bg-main-gradient {
+  background: linear-gradient(41deg, #95196c 0%, #9a1772 73%, #a60a76 100%) !important;
+}
+
+.hide {
+  display: none;
+}
+
+.ba-w_100 {
+  width: 100%;
+}
+
+.ba-h_100 {
+  height: 100%;
+}
+
+.ba-wh_100 {
+  height: 100%;
+  width: 100%;
+}
+
+.ba-text-break-all {
+  word-break: break-all;
+}
+
+
+.ba-relative {
+  position: relative;
+}
+
+.ba-absolute {
+  position: absolute;
+}
+
+.ba-absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ba-info-tag {
+  background: linear-gradient(269deg, #ed1816 19%, #fe6532 100%), #7e0315;
+  border-radius: 10rpx;
+  padding: 8rpx 12rpx;
+  @include Fr(20rpx, #ffffff);
+}
+
+.ba-info-tag-ss {
+  @extend .ba-info-tag;
+  border-radius: 5rpx !important;
+  @include Fr(18rpx);
+  padding: 2rpx 12rpx;
+}
+
+.ba-opacity-0 {
+  opacity: 0;
+}
+
+.ba-btn-s {
+  @include Fr(28rpx, $uni-color-primary);
+  padding: 14rpx 55rpx;
+  background-color: white;
+  border-radius: 60rpx;
+}
+
+
+.ba-btn-full-s {
+  @extend .ba-btn-s;
+  color: white !important;
+  @extend .bg-main-gradient;
+}
+
+.ba-btn-full-ss {
+  @extend .ba-btn-full-s;
+  @include Fr(23rpx);
+  padding: 10rpx 30rpx !important;
+}
+
+.ba-flex {
+  display: flex;
+}
+
+.ba-flex-start {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.ba-flex-end {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.ba-flex-center-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+
+.ba-flex-center-start {
+  display: flex;
+  align-items: center;
+   justify-content: flex-start;
+}
+
+.ba-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ba-flex-end-between {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.ba-flex-start-between {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.ba-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ba-flex-around {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.ba-flex-align-center {
+  display: flex;
+  align-items: center;
+}
+
+.ba-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.ba-flex-col-start {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+
+.ba-flex-col-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ba-flex-col-between {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ba-flex-col-start {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.ba-flex-col-end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.flex-wrap-wrap {
+  flex-wrap: wrap;
+}
+
+
+.ba-flex-one {
+  flex: 1;
+}
+
+.ba-align-items-end {
+  align-items: flex-end;
+
+}
+
+.ba-text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ba-bottom-btn {
+  @include Fr(30rpx, #FFFFFF);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  @extend .bg-main-gradient;
+  height: 110rpx;
+  line-height: 100rpx;
+
+  &.disabled {
+    background: $uni-background-color-disable !important;
+  }
+}
+
+.ba-no-click {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+  }
+}
+
+.text-line-clamp-1 {
+  @include text-line-clamp(1);
+}
+
+.text-line-clamp-2 {
+  @include text-line-clamp(2);
+}
+
+.text-line-clamp-3 {
+  @include text-line-clamp(3);
+}
+
+.ba-price {
+  @include Fr(28rpx, #C82B11);
+
+  ::before {
+    content: '￥';
+    @include Fr(20rpx);
+  }
+}
+
+.ba-fixed-bottom-wrapper {
+  background-color: white;
+  padding: 30rpx 35rpx calc(env(safe-area-inset-bottom) + 20rpx) 35rpx;
+}
+
+
+.ba-absolute-full {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+.ba-hidden-button {
+  opacity: 0;
+}
+
+.ba-tag {
+  background-color: #FCEFDF;
+  @include Fr($uni-font-size-base, #EA9527);
+  border-radius: 5rpx;
+  padding: 5rpx 23rpx;
+}
+
+.ba-tag-s {
+  @extend .ba-tag;
+  @include Fr($uni-font-size-sm, #EA9527);
+
+}
+
+.ba-home-card-wapper {
+  // background-color: white;
+  margin: 15rpx var(--ba-home-card-wapper-ma);
+  width: calc(100% - var(--ba-home-card-wapper-ma) * 2);
+  border-radius: 20rpx;
+  overflow: hidden;
+  position: relative;
+
+  .list-wapper {
+    margin-top: 0rpx;
+    margin-bottom: 20rpx;
+  }
+}
+
+.ba-shop-car {
+  width: 39rpx;
+  height: 39rpx;
+  margin-right: 10rpx;
+}
+
+.ba-card {
+  box-sizing: border-box;
+  margin: $uni-spacing;
+  width: calc(100% - 60rpx);
+  display: flex;
+  flex-direction: column;
+  border-radius: 20rpx;
+  background-color: white;
+
+  +.ba-card {
+    margin-top: 30rpx;
+  }
+
+  .ba-card-row {
+    padding: 40rpx 30rpx;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .ba-info-row {
+    @extend .ba-flex-between;
+
+    +.ba-info-row {
+      margin-top: 20rpx;
+    }
+  }
+
+  .ba-card-title {
+    @include Fr(25rpx, #000000)
+  }
+
+  .ba-card-detail {
+    @include Fr(25rpx, #000000)
+  }
+
+}
+
+
+.ba-arrow {
+  width: 10rpx;
+  height: 10rpx;
+  border-top: 4rpx solid #ccc;
+  border-right: 4rpx solid #ccc;
+  transform: rotate(45deg);
+}
+
+
+.pageBackgroundLinearGradient {
+  background-image: linear-gradient($uni--color-nav-bg 1%, $uni-color-page-bg 15%, $uni-color-page-bg);
+}
+
+.color-primary {
+  color: $uni-color-primary
+}
+
+.placeholder-class {
+  color: #c0c4cc;
+}
+
+.form-right_msg {
+  .u-form-item__body__right__message {
+    text-align: right;
+    margin-right: 5rpx;
+  }
+}

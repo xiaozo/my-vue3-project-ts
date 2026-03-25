@@ -62,4 +62,5 @@ onError(() => {
 
 <style lang="scss">
 @import "uview-pro/index.scss";
+@import "./static/scss/variables/variables.scss";
 </style>

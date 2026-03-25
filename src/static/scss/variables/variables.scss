@@ -1,0 +1,97 @@
+@import './space.scss';
+@import './line.scss';
+@import './radius.scss';
+
+
+.bg-gray {
+  background-color: #F0F0F0
+}
+
+.bg-transparent {
+  background-color: transparent
+}
+
+.fontSize-s {
+  @include Fn($uni-font-size-sm);
+}
+.fontSize {
+  @include Fn($uni-font-size-base);
+}
+
+.fontSize-l {
+  @include Fn($uni-font-size-lg);
+}
+
+.fontSize-light {
+  @include Fl($uni-font-size-base);
+}
+
+.fontSize-m-l {
+  @include Fm($uni-font-size-lg);
+}
+
+@for $i from 18 through 40 {
+  .fontSize#{$i} {
+    @include Fn(1rpx * $i);
+  }
+}
+
+.fc-primary {
+  color: $uni-color-primary;
+}
+
+.fc-gray {
+  color: #626262;
+}
+
+.fc-d-gray {
+  color: #606266
+}
+.fc-d-black {
+  color: #000000;
+}
+
+.fc-d-orange {
+  @extend .fontColorCB7A05;
+}
+
+
+.fontColor000 {
+  color: #000000;
+}
+
+.fontColor9e9e9e {
+  color: #9e9e9e;
+}
+
+.fontColor606266 {
+  color: #606266;
+}
+
+.fontColorCB7A05 {
+  color: #cb7a05;
+}
+
+
+.fontColorC82B11 {
+  color: #c82b11;
+}
+
+.fontColorRed {
+  @extend .fontColorC82B11;
+}
+
+.fontColor626262 {
+  color: #626262;
+}
+
+.fontColorFFFFFF {
+  color: #ffffff;
+}
+
+.borderColor626262{
+  border-color: #626262;
+
+}
+@import './common.scss';
+

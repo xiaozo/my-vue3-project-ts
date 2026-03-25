@@ -1,0 +1,10 @@
+$ba-radius-root:2rpx;
+
+.ba-radius-0 {
+    border-radius: 0;
+}
+
+.ba-radius-2 {
+    border-radius: $ba-radius-root * 2;
+
+}

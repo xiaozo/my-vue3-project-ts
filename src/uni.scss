@@ -11,21 +11,32 @@
  *
  * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
  */
-@import 'uview-pro/theme.scss';
+
+ @import 'uview-pro/theme.scss';
+
 /* 颜色变量 */
 
-/* 行为相关颜色 */
-$uni-color-primary: #007aff;
+@function color-primary_rgba($opacity) {
+    @return rgba(255, 52, 86, $opacity);
+
+}
+
+$uni-color-primary: #9B1078;
 $uni-color-success: #4cd964;
 $uni-color-warning: #f0ad4e;
 $uni-color-error: #dd524d;
+$uni-color-page-bg: #F7F7F7;
+$uni--color-nav-bg:#8D2160;
 
 /* 文字基本颜色 */
 $uni-text-color: #333; // 基本色
+$uni-text-color1: #233445; // 辅助黑色
 $uni-text-color-inverse: #fff; // 反色
 $uni-text-color-grey: #999; // 辅助灰色，如加载更多的提示信息
 $uni-text-color-placeholder: #808080;
 $uni-text-color-disable: #c0c0c0;
+$uni-background-color-disable: #c0c4cc;
+$uni-placeholder-grey: #c0c0c0;
 
 /* 背景颜色 */
 $uni-bg-color: #fff;
@@ -39,9 +50,9 @@ $uni-border-color: #c8c7cc;
 /* 尺寸变量 */
 
 /* 文字尺寸 */
-$uni-font-size-sm: 12px;
-$uni-font-size-base: 14px;
-$uni-font-size-lg: 16;
+$uni-font-size-sm: 22rpx;
+$uni-font-size-base: 25rpx;
+$uni-font-size-lg: 30rpx;
 
 /* 图片尺寸 */
 $uni-img-size-sm: 20px;
@@ -49,20 +60,13 @@ $uni-img-size-base: 26px;
 $uni-img-size-lg: 40px;
 
 /* Border Radius */
-$uni-border-radius-sm: 2px;
-$uni-border-radius-base: 3px;
-$uni-border-radius-lg: 6px;
+$uni-border-radius-sm: 4rpx;
+$uni-border-radius-base: 6rpx;
+$uni-border-radius-lg: 12rpx;
 $uni-border-radius-circle: 50%;
 
-/* 水平间距 */
-$uni-spacing-row-sm: 5px;
-$uni-spacing-row-base: 10px;
-$uni-spacing-row-lg: 15px;
-
-/* 垂直间距 */
-$uni-spacing-col-sm: 4px;
-$uni-spacing-col-base: 8px;
-$uni-spacing-col-lg: 12px;
+// 间距 */
+$uni-spacing:30rpx;
 
 /* 透明度 */
 $uni-opacity-disabled: 0.3; // 组件禁用态的透明度
@@ -74,3 +78,69 @@ $uni-color-subtitle: #555; // 二级标题颜色
 $uni-font-size-subtitle: 18px;
 $uni-color-paragraph: #3f536e; // 文章段落颜色
 $uni-font-size-paragraph: 15px;
+
+@mixin text-line-clamp($line: 2) {
+    @content;
+    overflow: hidden;
+    -webkit-line-clamp: $line;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+
+@mixin Fb($fz: inherit, $color: inherit) {
+    @content;
+    font-size: $fz;
+    font-weight: bold;
+
+    @if ($color !=inherit) {
+        color: $color;
+    }
+
+
+}
+
+@mixin Fr($fz: inherit, $color: inherit) {
+    @content;
+    font-size: $fz;
+    font-weight: 400;
+    font-family: 'MiSans-Regular';
+
+    @if ($color !=inherit) {
+        color: $color;
+    }
+}
+
+@mixin Fn($fz: inherit, $color: inherit) {
+    @content;
+    font-size: $fz;
+    font-weight: 400;
+    font-family: 'MiSans-Regular';
+    @if ($color != inherit) {
+        color: $color;
+    }
+    
+}
+
+@mixin Fm($fz: inherit, $color: inherit) {
+    @content;
+    font-size: $fz;
+    font-weight: 500;
+    font-family: 'MiSans-Regular';
+    @if ($color != inherit) {
+        color: $color;
+    }
+    
+}
+
+@mixin Fl($fz: inherit, $color: inherit) {
+    @content;
+    font-size: $fz;
+    font-weight: 300;
+    font-family: 'MiSans-Regular';
+    @if ($color != inherit) {
+        color: $color;
+    }
+    
+}

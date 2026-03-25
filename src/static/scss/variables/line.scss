@@ -1,0 +1,26 @@
+$ba-line-root:2rpx;
+
+.ba-row-line,
+.ba-row-line-17 {
+  position: relative;
+}
+
+.ba-row-line::after,
+.ba-row-line-17::after {
+  content: '';
+  position: absolute;
+  height: 1rpx;
+  background-color: #f5f5f5;
+  bottom: 0;
+}
+
+.ba-row-line:not(:last-child)::after{
+  left: 0;
+  right: 0;
+
+}
+.ba-row-line-17:not(:last-child)::after{
+  left: $ba-line-root * 17;
+  right: $ba-line-root * 17;
+
+}
