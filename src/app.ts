@@ -10,6 +10,5 @@ export function install(app: App) {
    app.config.globalProperties.$hasPermission = userStore.hasPermission
      // 模态框对象
   app.config.globalProperties.$modal = modal
-  console.log("app.ts",modal);
   
 } 

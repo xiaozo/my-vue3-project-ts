@@ -15,7 +15,7 @@ export default {
 import { onLaunch, onShow, onHide, onError } from "@dcloudio/uni-app";
 
 import pagesJson from '@/pages.json'
-import { getCurrentInstance } from "vue";
+import { getCurrentInstance, type ComponentInternalInstance } from "vue";
 
 ///快速获取标题
 const pagesItems = () => {
@@ -44,9 +44,10 @@ const pagesItems = () => {
 };
 
 onLaunch(() => {
-  const instance = getCurrentInstance();
+  const instance = getCurrentInstance() as ComponentInternalInstance;
   const app = instance?.proxy as AnyObject;
   app.globalData.pagesItems = pagesItems();
+
 });
 onShow(() => {
   console.log("App Show");

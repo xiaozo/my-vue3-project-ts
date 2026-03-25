@@ -12,11 +12,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, getCurrentInstance } from 'vue';
+import { ref, getCurrentInstance, type ComponentInternalInstance } from 'vue';
 import {
   onLoad
 } from '@dcloudio/uni-app';
-const { proxy } = getCurrentInstance() as AnyObject
+const { proxy } = getCurrentInstance() as ComponentInternalInstance
 import { login, getCodeImg, getInfo } from '@/api/login';
 import { setToken } from '@/api/utils';
 import { pageHook } from "@/common/pageHook"
@@ -44,6 +44,7 @@ const {
 } = pageHook(paging);
 
 onLoad(() => {
+  // console.log(proxy.$modal);
   setTimeout(() => {
     getCodeImg.bind(proxy)({}).then((res: GetCodeImgRes) => {
       codeUrl.value = 'data:image/gif;base64,' + res.img
