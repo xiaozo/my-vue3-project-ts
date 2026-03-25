@@ -17,6 +17,7 @@ declare global {
 		timeout?: number;
 		silent?: boolean;  ///是否是静默请求，true不提示错误信息
 		showPageState?: boolean;  ///是否显示页面状态，true显示，false不显示
+		showLoading?: boolean;  ///是否显示加载动画，true显示，false不显示
 	}
 
 	interface ApiRequestObj<T = any> {
@@ -53,14 +54,15 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 		},
 		timeout: 10000,
 		silent,
-		showPageState
+		showPageState,
+		showLoading: false
 	}
 
 
 	defaultOptions = mergeRequestOptions(defaultOptions, options);
 
 	const { headers } = defaultOptions;
-	
+
 	const token = headers!.isToken ? getToken() : null;
 	if (token) {
 		headers!['Authorization'] = `Bearer ${token}`;
@@ -70,7 +72,12 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 	///移除isToken
 	delete headers!.isToken
 
-	const heade11 = { ...headers }
+	if (defaultOptions.showLoading) {
+		uni.showLoading({
+			title: "",
+			mask: true,
+		});
+	}
 
 	return new Promise<T>((resolve, reject) => {
 		uni.request({
@@ -142,7 +149,13 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 			if (!silent) {
 				msgErrorToast(message)
 			}
-		})
-	})
+		}).finally(() => {
 
+			if (defaultOptions.showLoading) {
+				uni.hideLoading();
+			}
+
+		})
+
+	})
 }

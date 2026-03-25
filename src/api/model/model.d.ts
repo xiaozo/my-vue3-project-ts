@@ -3,17 +3,17 @@ declare global {
     declare namespace MODEL {
         ///用户
         interface UserInfo {
-            remark: string;
-            userId: number;
-            deptId: number;
+            userId: number | string;
             userName: string;
-            nickName: string;
-            phonenumber: string;
-            sex: string;
+            nickName?: string;
+            remark?: string;
+            deptId?: number;
+            phonenumber?: string;
+            sex?: string;
             avatar: string;
-            dept: DeptInfo;
-            roles: RoleInfo[];
-            admin: boolean;
+            dept?: DeptInfo;
+            roles?: RoleInfo[];
+            admin?: boolean;
         }
 
         ///部门

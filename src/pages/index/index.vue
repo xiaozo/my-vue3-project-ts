@@ -18,6 +18,7 @@ import {
 const { proxy } = getCurrentInstance() as AnyObject
 import { login, getCodeImg, getInfo } from '@/api/login';
 import { setToken } from '@/api/utils';
+import { useUserStore } from '@/store'
 import {
   pageHook
 } from "@/common/pageHook"
@@ -26,6 +27,7 @@ const codeUrl = ref("")
 // v-model绑定的这个变量不要在分页请求结束中自己赋值，直接使用即可
 const dataList = ref([])
 
+const userStore = useUserStore()
 // 或使用简化写法
 const paging = ref<MyPagingRef>();
 
@@ -70,17 +72,32 @@ const queryList = (pageNo: number, pageSize: number) => {
 }
 
 const loginAction = () => {
-  console.log("loginAction", loginForm.value);
+  // console.log("loginAction", loginForm.value);
   ///请求登录接口
-  login({
-    params: loginForm.value
-  }).then((res: LoginRes) => {
-   
-    setToken(res.token)
-    getInfo({}).then((res: GetInfoRes ) => {
-      console.log("getInfo res", res)
+  // login({
+  //   params: loginForm.value
+  // }).then((res: LoginRes) => {
+
+  //   setToken(res.token)
+  //   getInfo({}).then((res: GetInfoRes) => {
+  //     console.log("getInfo res", res)
+  //   })
+  // })
+
+  if (userStore.isLoggedIn) {
+
+
+  } else {
+    useUserStore().login(
+      loginForm.value
+    ).then((res: LoginRes) => {
+
+      useUserStore().getInfo().then((res: GetInfoRes) => {
+        console.log("getInfo res", res)
+      })
     })
-  })
+  }
+
 
 
 }
