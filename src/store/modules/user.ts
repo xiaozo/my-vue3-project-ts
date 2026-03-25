@@ -1,9 +1,9 @@
 // stores/user.ts
-import { defineStore } from 'pinia';
 import { ref, computed, reactive } from 'vue';
-import {  getToken } from '@/api/utils'
+import { getToken } from '@/api/utils'
 
-export const useUserStore = defineStore('user', () => {
+// 使用简单的 reactive 状态管理而不是 pinia
+export function useUserStore() {
   // State
   const user = ref<MODEL.UserInfo | null>(null);
   const token = ref<string>('');
@@ -30,8 +30,6 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('token');
   }
   
-  
-  // 暴露所有内容
   return {
     // State
     user,
@@ -48,4 +46,4 @@ export const useUserStore = defineStore('user', () => {
     login,
     logout,
   };
-});
+}
