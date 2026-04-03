@@ -3,7 +3,7 @@
     <!-- z-paging默认铺满全屏，此时页面所有view都应放在z-paging标签内，否则会被盖住 -->
     <!-- 需要固定在页面顶部的view请通过slot="top"插入，包括自定义的导航栏 -->
     <image :src="codeUrl" class="login-code-img" @click="loginAction" show-menu-by-longpress="true"></image>
-    <text v-if="$hasPermission(['*:*:*'])">{{loginForm.username}}</text>
+    <text v-if="$hasPermission(['*:*:*'])">{{ loginForm.username }}</text>
     <input v-model="loginForm.code" type="number" class="input" placeholder="请输入验证码" maxlength="4" />
     <view class="item" v-for="(item, index) in dataList" :key="index">
       <view class="item-title"> </view>
@@ -21,7 +21,7 @@ import { login, getCodeImg, getInfo } from '@/api/login';
 import { setToken } from '@/api/utils';
 import { pageHook } from "@/common/pageHook"
 import { useUserStore } from '@/store'
-
+import { request } from "@/api/request"
 const userStore = useUserStore()
 
 const codeUrl = ref("")
@@ -46,18 +46,33 @@ const {
 onLoad(() => {
   // console.log(proxy.$modal);
   setTimeout(() => {
-    getCodeImg.bind(proxy)({}).then((res: GetCodeImgRes) => {
-      codeUrl.value = 'data:image/gif;base64,' + res.img
-      loginForm.value.uuid = res.uuid
+    // getCodeImg.bind(proxy)({}).then((res: GetCodeImgRes) => {
+    //   codeUrl.value = 'data:image/gif;base64,' + res.img
+    //   loginForm.value.uuid = res.uuid
+    //   paging.value?.complete();
+
+    // }).catch((err: ApiError) => {
+
+    //   console.log("getCodeImg err", err)
+
+    // })
+    request.bind(proxy)("/wechat/user/update-info", {
+      params: {
+        name: "华伦校友6572",
+        ossPath: ""
+      },
+      options: {
+        method: "POST"
+      }
+
+    }).then((res: any) => {
       paging.value?.complete();
+      console.log("res", res)
 
     }).catch((err: ApiError) => {
-
-      console.log("getCodeImg err", err)
-
+      console.log("err", err)
     })
   }, 200);
-
 
 })
 
@@ -86,8 +101,8 @@ const loginAction = () => {
   // })
 
   if (userStore.isLoggedIn) {
-    console.log("hasadimin:",userStore.hasPermission(["*:*:*"]))
-    
+    console.log("hasadimin:", userStore.hasPermission(["*:*:*"]))
+
 
   } else {
     userStore.login(

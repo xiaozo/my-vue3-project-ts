@@ -1,7 +1,7 @@
 
-import { mergeRequestOptions, getToken } from './utils'
+import { mergeRequestOptions } from './utils'
 import { msgErrorToast } from '@/utils'
-
+import cryptoJS from "crypto-js";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 export const ErrorCode = {
@@ -9,27 +9,6 @@ export const ErrorCode = {
 	'403': '当前操作没有权限',
 	'404': '访问资源不存在',
 	'default': '系统未知错误，请反馈给管理员'
-}
-
-// 从 httpnew.js 迁移的加密配置和函数
-// 在 uni-app 项目中，可以使用动态 import 或直接将 crypto-js 作为全局变量
-let CryptoJS: any;
-
-try {
-  // 尝试获取全局 CryptoJS 对象
-  CryptoJS = (window as any).CryptoJS;
-} catch (error) {
-  // 如果全局对象不存在，创建一个简单的替代实现
-  CryptoJS = {
-    MD5: (str: string) => ({ toString: () => 'md5_' + str }),
-    HmacSHA256: (str: string, key: string) => ({ toString: () => 'hmac_' + str }),
-    enc: {
-      Base64: {
-        stringify: (wordArray: any) => btoa(JSON.stringify(wordArray)),
-        parse: (base64Str: string) => ({})
-      }
-    }
-  };
 }
 
 // 常量定义
@@ -42,8 +21,8 @@ function getUserId(): string {
   const userInfo = uni.getStorageSync('userInfo');
   let userId = userInfo ? userInfo.userId : 0;
   // 两次MD5加密
-  userId = CryptoJS.MD5(userId.toString()).toString();
-  userId = CryptoJS.MD5(userId).toString();
+  userId = cryptoJS.MD5(userId.toString()).toString();
+  userId = cryptoJS.MD5(userId).toString();
   return userId;
 }
 
@@ -58,8 +37,8 @@ function getUserId(): string {
 function createSign(method: string, URL: string, param: any, ClientTimestamp: number): string {
   const paramString = param ? JSON.stringify(param) : "";
   const StringToSign = method + "\n" + URL + "\n" + ClientTimestamp + "\n" + paramString;
-  const HmacSignature = CryptoJS.HmacSHA256(StringToSign, SecretKey);
-  const base64Str = CryptoJS.enc.Base64.stringify(HmacSignature);
+  const HmacSignature = cryptoJS.HmacSHA256(StringToSign, SecretKey);
+  const base64Str = cryptoJS.enc.Base64.stringify(HmacSignature);
   
   // Base64 URL 安全编码
   const Base64URL = function(base64Str: string): string {
@@ -73,12 +52,6 @@ function createSign(method: string, URL: string, param: any, ClientTimestamp: nu
   
   return Base64URL(base64Str);
 }
-
-// ARMS 监控（如果不存在则创建空实现）
-const ARMS = (window as any).ARMS || {
-  api: () => {} // 空实现，避免未定义错误
-};
-
 
 declare global {
 	interface RequestOptions {
@@ -110,124 +83,6 @@ declare global {
 	}
 
 }
-export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
-
-	const proxy = this as any
-	const { options, params } = data
-	const silent = options?.silent || !!proxy.$refs || false;
-	const showPageState = options?.showPageState || !!proxy.$refs || false;
-
-	let defaultOptions: RequestOptions = {
-		method: 'GET',
-		headers: {
-			isToken: true,
-		},
-		timeout: 10000,
-		silent,
-		showPageState,
-		showLoading: false
-	}
-
-
-	defaultOptions = mergeRequestOptions(defaultOptions, options);
-
-	const { headers } = defaultOptions;
-
-	const token = headers!.isToken ? getToken() : null;
-	if (token) {
-		headers!['Authorization'] = `Bearer ${token}`;
-	}
-
-
-	///移除isToken
-	delete headers!.isToken
-
-	if (defaultOptions.showLoading) {
-		uni.showLoading({
-			title: "",
-			mask: true,
-		});
-	}
-
-	return new Promise<T>((resolve, reject) => {
-		uni.request({
-			url: baseUrl + url,
-			data: params,
-			method: defaultOptions.method,
-			header: headers,
-			timeout: defaultOptions.timeout,
-		}).then((res: any) => {
-			const data = res.data as any;
-			const code = data?.code || 200;
-			const msg = data?.msg || ErrorCode[code as keyof typeof ErrorCode] || ErrorCode['default'];
-			if (code === 402) {
-				console.log("登录过期");
-				reject('无效的会话，或者会话已过期，请重新登录。')
-			} else if (code !== 200) {
-				if (!!showPageState) {
-					uni.$emit('net-error', {
-						page: proxy,
-						msg: msg
-
-					})
-				}
-				if (!silent) {
-					msgErrorToast(msg)
-				}
-
-				reject({
-					msg, code, data
-				})
-			} else {
-				if (!!showPageState) {
-					uni.$emit('net-success', {
-						page: proxy
-					})
-				}
-				resolve(data as T);
-			}
-
-		}).catch((err: any) => {
-			let { message } = err
-			console.log("请求失败", err);
-
-			try {
-				if (message === 'Network Error') {
-					message = '后端接口连接异常'
-				} else if (message.includes('timeout')) {
-					message = '系统接口请求超时'
-				} else if (message.includes('Request failed with status code')) {
-					message = '系统接口' + message.slice(-3) + '异常'
-				}
-			} catch (error) {
-				message = '系统接口异常'
-			}
-
-			reject({
-				msg: message,
-				code: -1,
-			});
-
-			if (!!showPageState) {
-
-				uni.$emit('net-error', {
-					page: proxy,
-					msg: message
-
-				})
-			}
-			if (!silent) {
-				msgErrorToast(message)
-			}
-		}).finally(() => {
-
-			if (defaultOptions.showLoading) {
-				uni.hideLoading();
-			}
-
-		})
-	})
-}
 
 /**
  * 新的请求方法，基于 httpnew.js 的实现迁移
@@ -235,7 +90,10 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 /**
  * 新的请求方法，基于 httpnew.js 的实现迁移，与原有 request 方法保持相同签名
  */
-export function newRequest<T>(url: string, data: ApiRequestObj): Promise<T> {
+let getToken = function () {
+  return "b2a6e74c-efd3-47be-9949-40f8661b7e7d";
+};
+export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 	const proxy = this as any;
 	const { options, params } = data;
 
@@ -248,7 +106,6 @@ export function newRequest<T>(url: string, data: ApiRequestObj): Promise<T> {
 
 	// 获取请求方法，默认为 GET
 	const method = (options?.method || 'GET').toUpperCase();
-	const begin = Date.now();
 	const timestamp = new Date().getTime();
 
 	// 构建请求头
@@ -292,12 +149,9 @@ export function newRequest<T>(url: string, data: ApiRequestObj): Promise<T> {
 			timeout: options?.timeout || 10000,
 		}).then((res: any) => {
 			const responseData = res.data;
-			const code = responseData?.code || 200;
-			const msg = responseData?.msg || '';
+			const code = responseData?.code || -1;
+			const msg = responseData?.msg || responseData?.error || '系统异常';
 
-			const time = Date.now() - begin;
-			// ARMS 监控上报
-			ARMS.api(url, true, time, code, msg, begin);
 
 			if (code === 402) {
 				console.log("登录过期");
@@ -324,10 +178,7 @@ export function newRequest<T>(url: string, data: ApiRequestObj): Promise<T> {
 				resolve(responseData as T);
 			}
 		}).catch((err: any) => {
-			const time = Date.now() - begin;
-			// ARMS 监控上报错误
-			ARMS.api(url, false, time, 500, '网络请求失败', begin);
-
+		
 			let { message } = err;
 			console.log("请求失败", err);
 
