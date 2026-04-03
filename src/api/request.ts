@@ -3,7 +3,6 @@ import { mergeRequestOptions } from './utils'
 import { msgErrorToast } from '@/utils'
 import cryptoJS from "crypto-js";
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
 export const ErrorCode = {
 	'401': '认证失败，无法访问系统资源',
 	'403': '当前操作没有权限',
@@ -24,6 +23,22 @@ function getUserId(): string {
 	userId = cryptoJS.MD5(userId.toString()).toString();
 	userId = cryptoJS.MD5(userId).toString();
 	return userId;
+}
+
+
+let getToken = function () {
+	return "b2a6e74c-efd3-47be-9949-40f8661b7e7d";
+};
+
+/**
+ * 生成 GUID
+ */
+function GUID(): string {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+		const r = Math.random() * 16 | 0;
+		const v = c === 'x' ? r : (r & 0x3 | 0x8);
+		return v.toString(16);
+	});
 }
 
 /**
@@ -111,108 +126,6 @@ declare global {
 
 }
 
-/**
- * 新的请求方法，基于 httpnew.js 的实现迁移
- */
-/**
- * 新的请求方法，基于 httpnew.js 的实现迁移，与原有 request 方法保持相同签名
- */
-let getToken = function () {
-	return "b2a6e74c-efd3-47be-9949-40f8661b7e7d";
-};
-
-
-/**
- * 生成 GUID
- */
-function GUID(): string {
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-		const r = Math.random() * 16 | 0;
-		const v = c === 'x' ? r : (r & 0x3 | 0x8);
-		return v.toString(16);
-	});
-}
-
-/**
- * OSS直传
- * @param body - 请求体，包含 media_type (3-视频 2-音频 1-图片)
- * @param config - 上传配置，包含 filePath 和 extname
- * @param callback - 进度回调函数
- */
-export function OSSUpload<T = OSSUploadResult>(
-	body: { media_type: number },
-	config: OSSConfig,
-	callback?: ProgressCallback
-): Promise<T> {
-	const fileName = GUID() + '.' + config.extname;
-	const filePath = config.filePath;
-
-	return new Promise<T>((resolve, reject) => {
-		request<T>('/wechat/enrollment-register/oss-sign', {
-			params: {},
-			options: { method: 'POST' }
-		}).then(res => {
-			const response = res as any;
-			if (response.code == 200) {
-				if (!config.extname) {
-					reject(new Error('extname is required'));
-					return;
-				}
-
-				const { host, dir, policy, signature, accessid } = response.data;
-
-				const uploadTask = uni.uploadFile({
-					url: host,
-					filePath: filePath,
-					name: 'file',
-					formData: {
-						'key': dir + "/" + fileName,
-						policy,
-						'OSSAccessKeyId': accessid,
-						'success_action_status': '200',
-						signature
-					},
-					success: (uploadRes) => {
-						const url = host + "/" + dir + "/" + fileName;
-						const result = {
-							error_code: 0,
-							data: {
-								name: fileName,
-								dir,
-								url,
-								media_type: body.media_type,
-								media_key: "temp_" + GUID()
-							}
-						};
-						resolve(result as T);
-					},
-					fail: (err) => {
-						uni.showToast({
-							title: 'oss上传失败',
-							icon: "none",
-							duration: 1500
-						});
-						reject(err);
-					}
-				});
-
-				uploadTask.onProgressUpdate((res) => {
-					callback?.(res);
-				});
-			} else {
-				uni.showToast({
-					title: 'oss上传失败' + response.message,
-					icon: "none",
-					duration: 1500
-				});
-				reject(response);
-			}
-		}).catch(err => {
-			console.log('OSSUpload error:', err);
-			reject(err);
-		});
-	});
-}
 
 export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 	const proxy = this as any;
@@ -335,6 +248,88 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 			if (loading) {
 				uni.hideLoading();
 			}
+		});
+	});
+}
+
+
+/**
+ * OSS直传
+ * @param body - 请求体，包含 media_type (3-视频 2-音频 1-图片)
+ * @param config - 上传配置，包含 filePath 和 extname
+ * @param callback - 进度回调函数
+ */
+export function OSSUpload<T = OSSUploadResult>(
+	body: { media_type: number },
+	config: OSSConfig,
+	callback?: ProgressCallback
+): Promise<T> {
+	const fileName = GUID() + '.' + config.extname;
+	const filePath = config.filePath;
+
+	return new Promise<T>((resolve, reject) => {
+		request<T>('/wechat/enrollment-register/oss-sign', {
+			params: {},
+			options: { method: 'POST' }
+		}).then(res => {
+			const response = res as any;
+			if (response.code == 200) {
+				if (!config.extname) {
+					reject(new Error('extname is required'));
+					return;
+				}
+
+				const { host, dir, policy, signature, accessid } = response.data;
+
+				const uploadTask = uni.uploadFile({
+					url: host,
+					filePath: filePath,
+					name: 'file',
+					formData: {
+						'key': dir + "/" + fileName,
+						policy,
+						'OSSAccessKeyId': accessid,
+						'success_action_status': '200',
+						signature
+					},
+					success: (uploadRes) => {
+						const url = host + "/" + dir + "/" + fileName;
+						const result = {
+							error_code: 0,
+							data: {
+								name: fileName,
+								dir,
+								url,
+								media_type: body.media_type,
+								media_key: "temp_" + GUID()
+							}
+						};
+						resolve(result as T);
+					},
+					fail: (err) => {
+						uni.showToast({
+							title: 'oss上传失败',
+							icon: "none",
+							duration: 1500
+						});
+						reject(err);
+					}
+				});
+
+				uploadTask.onProgressUpdate((res) => {
+					callback?.(res);
+				});
+			} else {
+				uni.showToast({
+					title: 'oss上传失败' + response.message,
+					icon: "none",
+					duration: 1500
+				});
+				reject(response);
+			}
+		}).catch(err => {
+			console.log('OSSUpload error:', err);
+			reject(err);
 		});
 	});
 }
