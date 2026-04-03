@@ -56,22 +56,22 @@ onLoad(() => {
     //   console.log("getCodeImg err", err)
 
     // })
-    request.bind(proxy)("/wechat/user/update-info", {
-      params: {
-        name: "华伦校友6572",
-        ossPath: ""
-      },
-      options: {
-        method: "POST"
-      }
+    // request.bind(proxy)("/wechat/user/update-info", {
+    //   params: {
+    //     name: "华伦校友6572",
+    //     ossPath: ""
+    //   },
+    //   options: {
+    //     method: "POST"
+    //   }
 
-    }).then((res: any) => {
-      paging.value?.complete();
-      console.log("res", res)
+    // }).then((res: any) => {
+    //   paging.value?.complete();
+    //   console.log("res", res)
 
-    }).catch((err: ApiError) => {
-      console.log("err", err)
-    })
+    // }).catch((err: ApiError) => {
+    //   console.log("err", err)
+    // })
   }, 200);
 
 })

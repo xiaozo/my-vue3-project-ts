@@ -18,12 +18,12 @@ const postUrl = import.meta.env.VITE_API_BASE_URL || '';
 
 // 从 httpnew.js 迁移的函数
 function getUserId(): string {
-  const userInfo = uni.getStorageSync('userInfo');
-  let userId = userInfo ? userInfo.userId : 0;
-  // 两次MD5加密
-  userId = cryptoJS.MD5(userId.toString()).toString();
-  userId = cryptoJS.MD5(userId).toString();
-  return userId;
+	const userInfo = uni.getStorageSync('userInfo');
+	let userId = userInfo ? userInfo.userId : 0;
+	// 两次MD5加密
+	userId = cryptoJS.MD5(userId.toString()).toString();
+	userId = cryptoJS.MD5(userId).toString();
+	return userId;
 }
 
 /**
@@ -35,22 +35,22 @@ function getUserId(): string {
  * @returns sign 签名字符串
  */
 function createSign(method: string, URL: string, param: any, ClientTimestamp: number): string {
-  const paramString = param ? JSON.stringify(param) : "";
-  const StringToSign = method + "\n" + URL + "\n" + ClientTimestamp + "\n" + paramString;
-  const HmacSignature = cryptoJS.HmacSHA256(StringToSign, SecretKey);
-  const base64Str = cryptoJS.enc.Base64.stringify(HmacSignature);
-  
-  // Base64 URL 安全编码
-  const Base64URL = function(base64Str: string): string {
-    let safeB64 = base64Str.replace(/\+/g, "-");
-    safeB64 = safeB64.replace(/\//g, "_");
-    const mod4 = safeB64.length % 4;
-    const modAddStr = "====";
-    safeB64 = safeB64 + modAddStr.substring(0, mod4);
-    return safeB64;
-  };
-  
-  return Base64URL(base64Str);
+	const paramString = param ? JSON.stringify(param) : "";
+	const StringToSign = method + "\n" + URL + "\n" + ClientTimestamp + "\n" + paramString;
+	const HmacSignature = cryptoJS.HmacSHA256(StringToSign, SecretKey);
+	const base64Str = cryptoJS.enc.Base64.stringify(HmacSignature);
+
+	// Base64 URL 安全编码
+	const Base64URL = function (base64Str: string): string {
+		let safeB64 = base64Str.replace(/\+/g, "-");
+		safeB64 = safeB64.replace(/\//g, "_");
+		const mod4 = safeB64.length % 4;
+		const modAddStr = "====";
+		safeB64 = safeB64 + modAddStr.substring(0, mod4);
+		return safeB64;
+	};
+
+	return Base64URL(base64Str);
 }
 
 declare global {
@@ -82,6 +82,33 @@ declare global {
 		data?: any;
 	}
 
+	/**
+ * OSS上传配置
+ */
+	interface OSSConfig {
+		filePath: string;
+		extname: string;
+	}
+
+	/**
+	 * OSS上传结果
+	 */
+	interface OSSUploadResult {
+		error_code: number;
+		data: {
+			name: string;
+			dir: string;
+			url: string;
+			media_type: number;
+			media_key: string;
+		};
+	}
+
+	/**
+	 * OSS上传进度回调
+	 */
+	type ProgressCallback = (res: UniApp.OnProgressUpdateResult) => void;
+
 }
 
 /**
@@ -91,8 +118,102 @@ declare global {
  * 新的请求方法，基于 httpnew.js 的实现迁移，与原有 request 方法保持相同签名
  */
 let getToken = function () {
-  return "b2a6e74c-efd3-47be-9949-40f8661b7e7d";
+	return "b2a6e74c-efd3-47be-9949-40f8661b7e7d";
 };
+
+
+/**
+ * 生成 GUID
+ */
+function GUID(): string {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+		const r = Math.random() * 16 | 0;
+		const v = c === 'x' ? r : (r & 0x3 | 0x8);
+		return v.toString(16);
+	});
+}
+
+/**
+ * OSS直传
+ * @param body - 请求体，包含 media_type (3-视频 2-音频 1-图片)
+ * @param config - 上传配置，包含 filePath 和 extname
+ * @param callback - 进度回调函数
+ */
+export function OSSUpload<T = OSSUploadResult>(
+	body: { media_type: number },
+	config: OSSConfig,
+	callback?: ProgressCallback
+): Promise<T> {
+	const fileName = GUID() + '.' + config.extname;
+	const filePath = config.filePath;
+
+	return new Promise<T>((resolve, reject) => {
+		request<T>('/wechat/enrollment-register/oss-sign', {
+			params: {},
+			options: { method: 'POST' }
+		}).then(res => {
+			const response = res as any;
+			if (response.code == 200) {
+				if (!config.extname) {
+					reject(new Error('extname is required'));
+					return;
+				}
+
+				const { host, dir, policy, signature, accessid } = response.data;
+
+				const uploadTask = uni.uploadFile({
+					url: host,
+					filePath: filePath,
+					name: 'file',
+					formData: {
+						'key': dir + "/" + fileName,
+						policy,
+						'OSSAccessKeyId': accessid,
+						'success_action_status': '200',
+						signature
+					},
+					success: (uploadRes) => {
+						const url = host + "/" + dir + "/" + fileName;
+						const result = {
+							error_code: 0,
+							data: {
+								name: fileName,
+								dir,
+								url,
+								media_type: body.media_type,
+								media_key: "temp_" + GUID()
+							}
+						};
+						resolve(result as T);
+					},
+					fail: (err) => {
+						uni.showToast({
+							title: 'oss上传失败',
+							icon: "none",
+							duration: 1500
+						});
+						reject(err);
+					}
+				});
+
+				uploadTask.onProgressUpdate((res) => {
+					callback?.(res);
+				});
+			} else {
+				uni.showToast({
+					title: 'oss上传失败' + response.message,
+					icon: "none",
+					duration: 1500
+				});
+				reject(response);
+			}
+		}).catch(err => {
+			console.log('OSSUpload error:', err);
+			reject(err);
+		});
+	});
+}
+
 export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 	const proxy = this as any;
 	const { options, params } = data;
@@ -178,7 +299,7 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 				resolve(responseData as T);
 			}
 		}).catch((err: any) => {
-		
+
 			let { message } = err;
 			console.log("请求失败", err);
 
