@@ -223,6 +223,9 @@ export function request<T>(url: string, data: ApiRequestObj): Promise<T> {
 					message = '系统接口请求超时';
 				} else if (message.includes('Request failed with status code')) {
 					message = '系统接口' + message.slice(-3) + '异常';
+				} else {
+					message = '系统接口异常';
+
 				}
 			} catch (error) {
 				message = '系统接口异常';
