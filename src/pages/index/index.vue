@@ -5,6 +5,7 @@
     <!-- <image :src="codeUrl" class="login-code-img" @click="loginAction" show-menu-by-longpress="true"></image> -->
     <text v-if="$hasPermission(['*:*:*'])">{{ loginForm.username }}</text>
     <wd-icon name="home" size="20px"/>
+    <wd-button type="success">成功按钮</wd-button>
     <input v-model="loginForm.code" type="number" class="input" placeholder="请输入验证码" maxlength="4" />
     <view class="item" v-for="(item, index) in dataList" :key="index">
       <view class="item-title"> </view>
