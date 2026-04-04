@@ -1,17 +1,17 @@
 <template>
   <view class="u-nav-slot">
-    <view class="ba-px-4 ba-py-2" @click.stop="backAction" v-if="showBack">
-      <u-icon name="arrow-left" size="42" :color="fontColor"></u-icon>
+    <view class="ba-px-4 ba-py-2" @click.stop="backAction"  v-if="showBack">
+      <wd-icon name="arrow-left" size="25px" :color="fontColor"></wd-icon>
     </view>
-    <u-line
+    <ba-line
       v-if="showBack"
       direction="column"
       :hairline="false"
-      length="18"
+      length="18px"
       margin="0"
-    ></u-line>
+    ></ba-line>
     <view class="ba-px-4 ba-py-2" @click.stop="indexAction">
-      <u-icon name="home" size="42" :color="fontColor"></u-icon>
+      <wd-icon name="home" size="25px" :color="fontColor"></wd-icon>
     </view>
   </view>
 </template>
@@ -76,6 +76,6 @@ export default {
   border: 0.5px solid #dadbde;
   padding: 0;
   opacity: 0.8;
-  margin-left: 20rpx;
+  line-height: normal;
 }
 </style>

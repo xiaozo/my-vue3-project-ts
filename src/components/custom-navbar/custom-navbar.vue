@@ -1,5 +1,5 @@
 <template>
-  <u-navbar :title="title" :fixed="fixed" :is-back="false" :title-color=fontColor :title-size="TitleFontSize"
+  <!-- <u-navbar :title="title" :fixed="fixed" :is-back="false" :title-color=fontColor :title-size="TitleFontSize"
     :background="{
       backgroundColor: '#8D2160'
     }">
@@ -10,10 +10,28 @@
         <slot name="left" />
       </view>
     </template>
+<template #right>
+      <slot name="right" />
+    </template>
+</u-navbar> -->
+
+  <wd-navbar  :fixed="fixed" safeAreaInsetTop :custom-style="`background-color: #8D2160;`">
+    <template #left>
+      <view v-if="!$slots.left">
+        <custom-navback :dark="dark" />
+      </view>
+
+      <view v-else>
+        <slot name="left" />
+      </view>
+    </template>
+    <template slot="title">
+      <text :style="{ fontSize: TitleFontSize, color: fontColor }">{{ title }}</text>
+    </template>
     <template #right>
       <slot name="right" />
     </template>
-  </u-navbar>
+  </wd-navbar>
 </template>
 <script>
 export default {
@@ -38,26 +56,23 @@ export default {
   },
   computed: {
     fontColor() {
-      return this.dark ? "#000" : "#fff";
+      // 优先使用传入的颜色，否则根据 dark 模式自动切换
+      return (this.dark ? "#000" : "#fff");
     },
     TitleFontSize() {
-      console.log("TitleFontSize", this.titleFontSize);
-
       // 转为字符串
       const strValue = this.titleFontSize
       // 匹配数字和单位
       const match = strValue.match(/^(\d+(?:\.\d+)?)(px|rpx)?$/i)
 
       if (!match) {
-        // 如果不符合格式，返回原始值
         return strValue
       }
 
       const [, num, unit] = match
 
       return unit == "px" ? `${num * 2}` : `${num}`;
-
-    }
+    },
   },
   data() {
     return {

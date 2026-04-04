@@ -56,9 +56,9 @@
     "crypto-js": "^4.2.0",
     "pinia": "^2.0.36",
     "sass-loader": "^10.4.1",
-    "uview-pro": "^0.5.13",
     "vue": "3.4.21",
     "vue-i18n": "^9.1.9",
+    "wot-design-uni": "^1.14.0",
     "z-paging": "^2.8.8"
   },
   "devDependencies": {
